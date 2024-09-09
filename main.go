@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 )
 
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "Hello, World")
+}
+
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	// Register the handler function for the root ("/") route
+	http.HandleFunc("/", helloHandler)
+
+	// Start the HTTP server on port 8080
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		fmt.Printf("Server error: %v\n", err)
 	}
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Howdy")
-	})
-
-	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
