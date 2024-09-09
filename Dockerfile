@@ -1,16 +1,10 @@
 FROM golang:1.20-alpine AS builder
-
 WORKDIR /app
-
-COPY go.mod ./
-RUN go mod download
-
 COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o server
 
-RUN go build -o /gogo
-
-# Final minimal image
 FROM alpine:3.18
-COPY --from=builder /gogo /gogo
+WORKDIR /app
+COPY --from=builder /app/server .
 EXPOSE 8080
-CMD ["/gogo"]
+CMD ["./server"]
